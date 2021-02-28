@@ -16,22 +16,16 @@ import (
 
 func main() {
 	logger := log.NewLogfmtLogger(os.Stderr)
-	svc := transports.GetService()
-
-	var uppercase endpoint.Endpoint
-	var count endpoint.Endpoint
-
-	uppercase = services.MakeUppercaseEndpoint(svc)
-	uppercase = loggingMiddleware(log.With(logger, "method", "uppercase"))(uppercase)
+	var svc transports.StringService
+	svc = transports.GetService()
+	svc = internal.LoggingMiddleware{Logger: logger, Next: svc}
 	upperCaseHandler := httptransport.NewServer(
-		uppercase,
+		services.MakeUppercaseEndpoint(svc),
 		transports.DecodeUppercaseRequest,
 		internal.EncodeResponse,
 	)
-	count = services.MakeCountEndpoint(svc)
-	count = loggingMiddleware(log.With(logger, "method", "count"))(count)
 	countHandler := httptransport.NewServer(
-		count,
+		services.MakeCountEndpoint(svc),
 		transports.DecodeCountRequest,
 		internal.EncodeResponse,
 	)
