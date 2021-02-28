@@ -1,7 +1,30 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"net/http"
+
+	httptransport "github.com/go-kit/kit/transport/http"
+	"github.com/lucabecci/stringsvc-microservices/internal"
+	"github.com/lucabecci/stringsvc-microservices/services"
+)
 
 func main() {
-	fmt.Println("Hello World")
+	svc := services.GetService()
+	upperCaseHandler := httptransport.NewServer(
+		services.MakeUppercaseEndpoint(svc),
+		services.DecodeUppercaseRequest,
+		internal.EncodeResponse,
+	)
+
+	countHandler := httptransport.NewServer(
+		services.MakeCountEndpoint(svc),
+		services.DecodeCountRequest,
+		internal.EncodeResponse,
+	)
+
+	http.Handle("/uppercase", upperCaseHandler)
+	http.Handle("/count", countHandler)
+
+	log.Fatal(http.ListenAndServe(":4000", nil))
 }
