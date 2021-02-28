@@ -4,23 +4,24 @@ import (
 	"context"
 
 	"github.com/go-kit/kit/endpoint"
+	"github.com/lucabecci/stringsvc-microservices/transports"
 )
 
-func MakeUppercaseEndpoint(svc StringService) endpoint.Endpoint {
+func MakeUppercaseEndpoint(svc transports.StringService) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (response interface{}, err error) {
-		req := request.(UppercaseRequest)
+		req := request.(transports.UppercaseRequest)
 		v, err := svc.Uppercase(req.S)
 		if err != nil {
-			return UppercaseResponse{v, err.Error()}, nil
+			return transports.UppercaseResponse{V: v, Err: err.Error()}, nil
 		}
-		return UppercaseResponse{v, ""}, nil
+		return transports.UppercaseResponse{V: v, Err: ""}, nil
 	}
 }
 
-func MakeCountEndpoint(svc StringService) endpoint.Endpoint {
+func MakeCountEndpoint(svc transports.StringService) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (response interface{}, err error) {
-		req := request.(CountRequest)
+		req := request.(transports.CountRequest)
 		v := svc.Count(req.S)
-		return CountResponse{v}, nil
+		return transports.CountResponse{V: v}, nil
 	}
 }

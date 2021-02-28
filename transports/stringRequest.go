@@ -1,4 +1,4 @@
-package services
+package transports
 
 type UppercaseRequest struct {
 	S string `json:"s"`
