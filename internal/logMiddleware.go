@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/go-kit/kit/log"
-
 	"github.com/lucabecci/stringsvc-microservices/transports"
 )
 
@@ -13,9 +12,9 @@ type LoggingMiddleware struct {
 	Next   transports.StringService
 }
 
-func (mv LoggingMiddleware) Uppercase(s string) (output string, err error) {
+func (mw LoggingMiddleware) Uppercase(s string) (output string, err error) {
 	defer func(begin time.Time) {
-		mv.Logger.Log(
+		mw.Logger.Log(
 			"method", "uppercase",
 			"input", s,
 			"output", output,
@@ -23,7 +22,8 @@ func (mv LoggingMiddleware) Uppercase(s string) (output string, err error) {
 			"took", time.Since(begin),
 		)
 	}(time.Now())
-	output, err = mv.Next.Uppercase(s)
+
+	output, err = mw.Next.Uppercase(s)
 	return
 }
 
